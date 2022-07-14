@@ -1,58 +1,84 @@
-﻿using Azure.Messaging.EventGrid;
-using Azure.Messaging.EventGrid.SystemEvents;
-using CpmDemoApp.Models;
+﻿using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
-using System.Net.Http;
+using Azure.Messaging.EventGrid;
+using Azure.Messaging.EventGrid.SystemEvents;
 using System.Text.Json;
+using CpmDemoApp.Models;
 
-namespace CpmDemoApp.Controllers
+namespace viewer.Controllers
 {
-    [ApiController]
     [Route("webhook")]
-    //[Consumes("application/json")]
     public class WebhookController : Controller
     {
-        [HttpPost]
-        [HttpGet]
-        public JObject Post([FromBody] object request)
+        private bool EventTypeSubcriptionValidation
+            => HttpContext.Request.Headers["aeg-event-type"].FirstOrDefault() ==
+               "SubscriptionValidation";
+
+        private bool EventTypeNotification
+            => HttpContext.Request.Headers["aeg-event-type"].FirstOrDefault() ==
+               "Notification";
+
+        [HttpOptions]
+        public async Task<IActionResult> Options()
         {
-            var eventGridEvents = JsonSerializer.Deserialize<EventGridEvent[]>(request.ToString());
-            EventGridEvent eventGridEvent = eventGridEvents.FirstOrDefault();
-            //BinaryData events = BinaryData.FromStream((Stream)request);
-            //EventGridEvent[] eventGridEvents = EventGridEvent.ParseMany(events);
-            //var eventGridEvent = eventGridEvents.FirstOrDefault();
-
-            if (eventGridEvent == null) return new JObject(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
-            var data = eventGridEvent.Data.ToString();
-
-            if (string.Equals(eventGridEvent.EventType, "Microsoft.EventGrid.SubscriptionValidationEvent", StringComparison.OrdinalIgnoreCase))
+            using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
-                if (eventGridEvent.Data != null)
-                {
-                    var eventData = JsonSerializer.Deserialize<SubscriptionValidationEventData>(data);
-                    var responseData = new SubscriptionValidationResponse
-                    {
-                        ValidationResponse = eventData.ValidationCode
-                    };
+                var webhookRequestOrigin = HttpContext.Request.Headers["WebHook-Request-Origin"].FirstOrDefault();
+                var webhookRequestCallback = HttpContext.Request.Headers["WebHook-Request-Callback"];
+                var webhookRequestRate = HttpContext.Request.Headers["WebHook-Request-Rate"];
+                HttpContext.Response.Headers.Add("WebHook-Allowed-Rate", "*");
+                HttpContext.Response.Headers.Add("WebHook-Allowed-Origin", webhookRequestOrigin);
+            }
 
-                    if (responseData.ValidationResponse != null)
-                    {
-                        return JObject.FromObject(responseData);
-                    }
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post()
+        {
+            using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                var jsonContent = await reader.ReadToEndAsync();
+
+                // Check the event type.
+                // Return the validation code if it's 
+                // a subscription validation request. 
+                if (EventTypeSubcriptionValidation)
+                {
+                    return await HandleValidation(jsonContent);
+                }
+                else if (EventTypeNotification)
+                {
+                    return await HandleGridEvents(jsonContent);
+                }
+
+                return BadRequest();
+            }
+        }
+
+        private async Task<JsonResult> HandleValidation(string jsonContent)
+        {
+            var eventGridEvent = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent).First();
+            var eventData = JsonSerializer.Deserialize<SubscriptionValidationEventData>(eventGridEvent.Data.ToString());
+            var responseData = new SubscriptionValidationResponse
+            {
+                ValidationResponse = eventData.ValidationCode
+            };
+            return new JsonResult(responseData);
+        }
+
+        private async Task<IActionResult> HandleGridEvents(string jsonContent)
+        {
+            var eventGridEvents = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent);
+            foreach (var eventGridEvent in eventGridEvents)
+            {
+                if (string.Equals(eventGridEvent.EventType, "Microsoft.EventGrid.ExperimentalEvent", StringComparison.OrdinalIgnoreCase))
+                {
+                    var eventData = JsonSerializer.Deserialize<ExperimentalEventData>(eventGridEvent.Data.ToString());
                 }
             }
-            else
-            {
-                if (data == null) return new JObject(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
-                var eventData = JsonSerializer.Deserialize<object>(data);
-                return JObject.FromObject(eventData);
-            }
 
-            return new JObject(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
+            return Ok();
         }
     }
-    
 }
