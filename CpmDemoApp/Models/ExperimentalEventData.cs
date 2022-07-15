@@ -1,5 +1,3 @@
-using System;
-
 namespace CpmDemoApp.Models
 {
     public class ExperimentalEventData
@@ -17,18 +15,4 @@ namespace CpmDemoApp.Models
         public string ExternalMessageId { get; set; }
         public string ReceivedTimeStamp { get; set; }
     }
-
-    public class ExternalMessageEvent
-    {
-        public string Id { get; set; }
-        public string Topic { get; set; }
-        public string Subject { get; set; }
-        public BinaryData Data { get; set; }
-        public string EventType { get; set; }
-        public string DataVersion { get; set; }
-        public string MetadataVersion { get; set; }
-        public DateTime EventTime { get; set; }
-    }
-
-
 }
