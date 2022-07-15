@@ -18,6 +18,11 @@ namespace viewer.Controllers
             => HttpContext.Request.Headers["aeg-event-type"].FirstOrDefault() ==
                "Notification";
 
+        private JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         [HttpOptions]
         public async Task<IActionResult> Options()
         {
@@ -58,8 +63,8 @@ namespace viewer.Controllers
 
         private async Task<JsonResult> HandleValidation(string jsonContent)
         {
-            var eventGridEvent = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent).First();
-            var eventData = JsonSerializer.Deserialize<SubscriptionValidationEventData>(eventGridEvent.Data.ToString());
+            var eventGridEvent = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent, _options).First();
+            var eventData = JsonSerializer.Deserialize<SubscriptionValidationEventData>(eventGridEvent.Data.ToString(), _options);
             var responseData = new SubscriptionValidationResponse
             {
                 ValidationResponse = eventData.ValidationCode
@@ -69,12 +74,12 @@ namespace viewer.Controllers
 
         private async Task<IActionResult> HandleGridEvents(string jsonContent)
         {
-            var eventGridEvents = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent);
+            var eventGridEvents = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent, _options);
             foreach (var eventGridEvent in eventGridEvents)
             {
-                if (string.Equals(eventGridEvent.EventType, "Microsoft.EventGrid.ExperimentalEvent", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(eventGridEvent.EventType, "Microsoft.Communication.ExperimentalEvent", StringComparison.OrdinalIgnoreCase))
                 {
-                    var eventData = JsonSerializer.Deserialize<ExperimentalEventData>(eventGridEvent.Data.ToString());
+                    var eventData = JsonSerializer.Deserialize<ExperimentalEventData>(eventGridEvent.Data.ToString(), _options);
                 }
             }
 
