@@ -1,0 +1,48 @@
+﻿@{  
+    ViewBag.Title = "Home Page";  
+}  
+
+  
+<div align="center">  
+    <strong>Flower Shop Business Chat</strong>  
+</div>  
+  
+<tr class="form-group">  
+    @using (Html.BeginForm())  
+    {  
+        <table align="center">   
+            <tr>  
+                <td align="center">  
+                    @Html.Label("Phone Number:")  
+                    @Html.TextBox("Phone_Number")  
+                </td>  
+            </tr> 
+            
+            <tr>  
+                <td align="center">  
+                    @Html.Label("Message:")  
+                    @Html.TextBox("Message")  
+                </td>  
+            </tr>  
+  
+            <tr>  
+                <td align="center">  
+                    <input type="submit" value="Send" class="btn-primary" />  
+                </td>  
+  
+            </tr> 
+        </table>  
+    }  
+</tr>
+
+<ul>
+    @if(Messages.MessagesListStatic!=null)
+    {
+        @foreach (var message in Messages.MessagesListStatic)
+        {
+            <li>
+                @message
+            </li>
+        }
+    }
+</ul>
