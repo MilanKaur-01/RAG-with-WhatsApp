@@ -3,30 +3,31 @@
 }  
 
   
-<div align="center">  
+<div>  
     <strong>Flower Shop Business Chat</strong>  
 </div>  
   
 <tr class="form-group">  
     @using (Html.BeginForm())  
     {  
-        <table align="center">   
+        <table>   
             <tr>  
-                <td align="center">  
-                    @Html.Label("Phone Number:")  
-                    @Html.TextBox("Phone_Number")  
-                </td>  
+                <td> @Html.Label("Phone Number:")  </td>
+                <td> @Html.TextBox("Phone_Number") </td>  
             </tr> 
             
             <tr>  
-                <td align="center">  
-                    @Html.Label("Message:")  
-                    @Html.TextBox("Message")  
-                </td>  
+                <td>@Html.Label("Message:")  </td>
+                <td>@Html.TextBox("Message")  </td>
+            </tr>  
+
+            <tr>  
+                <td>@Html.Label("Image:")  </td>
+                <td>@Html.TextBox("Image")  </td>
             </tr>  
   
             <tr>  
-                <td align="center">  
+                <td>  
                     <input type="submit" value="Send" class="btn-primary" />  
                 </td>  
   

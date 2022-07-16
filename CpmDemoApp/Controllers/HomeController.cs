@@ -19,11 +19,28 @@ namespace CpmDemoApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(string Phone_Number, string Message)
+        public async Task<IActionResult> Index(string Phone_Number, string Message, string Image)
         {
-            var options = new SendExternalMessageOptions(Phone_Number, Message);
-            var result = await DemoChatClient.ChatClient.SendExternalMessageAsync(options);
-            if (result.Value.Status == ExternalMessageStatus.Enqueued)
+            if (string.IsNullOrWhiteSpace(Phone_Number) 
+                || (string.IsNullOrWhiteSpace(Message) && string.IsNullOrWhiteSpace(Image)))
+            {
+                ViewData["Gloria"] = "changed";
+                return View();
+            }
+
+            SendExternalMessageResult result;
+            if (Image != null)
+            {
+                var options = new SendExternalMessageOptions(Phone_Number, new Uri(Image));
+                result = await DemoChatClient.ChatClient.SendExternalMessageAsync(options);
+            }
+            else
+            {
+                var options = new SendExternalMessageOptions(Phone_Number, Message);
+                result = await DemoChatClient.ChatClient.SendExternalMessageAsync(options);
+            }
+
+            if (result.Status == ExternalMessageStatus.Enqueued)
             {
                 Messages.MessagesListStatic.Add($"Sent a message to \"{Phone_Number}\": \"{Message}\"");
                 ModelState.Clear();
