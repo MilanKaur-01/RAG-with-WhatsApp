@@ -53,13 +53,13 @@ namespace CpmDemoApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult MessagesList()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Privacy(string nothing)
+        public IActionResult MessagesList(string nothing)
         {
             return PartialView();
         }

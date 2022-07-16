@@ -5,7 +5,7 @@
 <script>
     function loadPartialView() {
             $.ajax({
-                url: "@Url.Action("Privacy","Home")",
+                url: "@Url.Action("MessagesList","Home")",
                 type: 'POST',
                 dataType: 'html',        
                 cache: false,
@@ -26,16 +26,16 @@
     RefreshPartial();
 </script>
 
-<div>  
-    <strong>Flower Shop Business Chat</strong>  
-</div>  
+<h1>Flower Shop Business Chat</h1>  
   
+<strong>Send a Message</strong>
+
 <tr class="form-group">  
     @using (Html.BeginForm())  
     {  
         <table>   
             <tr>  
-                <td> @Html.Label("Phone Number:")  </td>
+                <td> @Html.Label("Phone Number: ")  </td>
                 <td> @Html.TextBox("Phone_Number") </td>  
             </tr> 
             
@@ -45,7 +45,7 @@
             </tr>  
 
             <tr>  
-                <td>@Html.Label("Image:")  </td>
+                <td>@Html.Label("Image Url:")  </td>
                 <td>@Html.TextBox("Image")  </td>
             </tr>  
   
@@ -59,8 +59,10 @@
     }  
 </tr>
 
+<br>
+
 <div id="partialContainer">
     
-    @Html.Partial("Privacy")
+    @Html.Partial("MessagesList")
 
 </div>
