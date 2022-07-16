@@ -1,6 +1,14 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Messages List";
 }
-<h1>@ViewData["Title"]</h1>
-
-<p>Use this page to detail your site's privacy policy.</p>
+<ul>
+    @if(Messages.MessagesListStatic!=null)
+    {
+        @foreach (var message in Messages.MessagesListStatic)
+        {
+            <li>
+                @message
+            </li>
+        }
+    }
+</ul>

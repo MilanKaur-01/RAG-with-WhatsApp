@@ -2,7 +2,30 @@
     ViewBag.Title = "Home Page";  
 }  
 
-  
+<script>
+    function loadPartialView() {
+            $.ajax({
+                url: "@Url.Action("Privacy","Home")",
+                type: 'POST',
+                dataType: 'html',        
+                cache: false,
+                success: function (html) {
+                     $("#partialContainer").html(html); 
+                }
+            });
+        }
+    function RefreshPartial(){
+        //this will wait 1 seconds and then fire the load partial function
+        setTimeout(function(){
+            loadPartialView();
+            //recall this function so that it will continue to loop
+            RefreshPartial();
+        }, 1000);
+    }
+    //initialize the loop
+    RefreshPartial();
+</script>
+
 <div>  
     <strong>Flower Shop Business Chat</strong>  
 </div>  
@@ -36,14 +59,8 @@
     }  
 </tr>
 
-<ul>
-    @if(Messages.MessagesListStatic!=null)
-    {
-        @foreach (var message in Messages.MessagesListStatic)
-        {
-            <li>
-                @message
-            </li>
-        }
-    }
-</ul>
+<div id="partialContainer">
+    
+    @Html.Partial("Privacy")
+
+</div>

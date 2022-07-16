@@ -58,6 +58,12 @@ namespace CpmDemoApp.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Privacy(string nothing)
+        {
+            return PartialView();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
