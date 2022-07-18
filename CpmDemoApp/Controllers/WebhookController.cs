@@ -80,7 +80,11 @@ namespace viewer.Controllers
                 if (string.Equals(eventGridEvent.EventType, "Microsoft.Communication.ExperimentalEvent", StringComparison.OrdinalIgnoreCase))
                 {
                     var eventData = JsonSerializer.Deserialize<ExperimentalEventData>(eventGridEvent.Data.ToString(), _options);
-                    Messages.MessagesListStatic.Add($"Received message from \"{eventData.ExperimentalEventPayload.From}\": \"{eventData.ExperimentalEventPayload.Message}\"");
+
+                    Messages.MessagesListStatic.Add(new Message
+                    {
+                        Text = $"Received message from \"{eventData.ExperimentalEventPayload.From}\": \"{eventData.ExperimentalEventPayload.Message}\""
+                    }); 
                 }
             }
 

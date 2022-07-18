@@ -12,7 +12,14 @@
         @foreach (var message in Messages.MessagesListStatic)
         {
             <li>
-                @message
+                @if(message.Text!=null)
+                {
+                    @message.Text
+                }
+                @if(message.Image!=null)
+                {
+                    <img src=@message.Image>
+                }
             </li>
         }
     }

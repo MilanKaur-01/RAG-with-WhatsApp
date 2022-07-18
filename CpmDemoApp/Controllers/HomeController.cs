@@ -42,12 +42,29 @@ namespace CpmDemoApp.Controllers
 
             if (result.Status == ExternalMessageStatus.Enqueued)
             {
-                Messages.MessagesListStatic.Add($"Sent a message to \"{Phone_Number}\": \"{Message}\"");
+                if (Image != null)
+                {
+                    Messages.MessagesListStatic.Add(new Message
+                    {
+                        Text = $"Sent a image to \"{Phone_Number}\": ",
+                        Image = Image
+                    });
+                }
+                else
+                {
+                     Messages.MessagesListStatic.Add(new Message { 
+                        Text = $"Sent a message to \"{Phone_Number}\": \"{Message}\"" 
+                     });
+                }
+                   
                 ModelState.Clear();
             }
             else
             {
-                Messages.MessagesListStatic.Add($"Message \"{Message}\" to \"{Phone_Number}\" failed.");
+                Messages.MessagesListStatic.Add(new Message
+                {
+                    Text = $"Message \"{Message}\" to \"{Phone_Number}\" failed."
+                });
             }
             
             return View();
