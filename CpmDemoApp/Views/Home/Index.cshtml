@@ -61,8 +61,18 @@
 
 <br>
 
-<div id="partialContainer">
-    
-    @Html.Partial("MessagesList")
+<div>  
+    <strong>Chat History</strong>  
+</div>  
 
+<div style="height: 600px; overflow: auto">
+    <div id="partialContainer">
+        @Html.Partial("MessagesList")
+    </div>
 </div>
+
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
