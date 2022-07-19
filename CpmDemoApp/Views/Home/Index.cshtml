@@ -31,7 +31,7 @@
 <strong>Send a Message</strong>
 
 <tr class="form-group">  
-    @using (Html.BeginForm())  
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post))  
     {  
         <table>   
             <tr>  
@@ -70,6 +70,13 @@
         @Html.Partial("MessagesList")
     </div>
 </div>
+
+<br>
+
+@using (Html.BeginForm("ClearHistory", "Home", FormMethod.Post))
+{
+    <input type="submit" value="Clear History" class="btn-secondary" />  
+}
 
 <script>
     if ( window.history.replaceState ) {

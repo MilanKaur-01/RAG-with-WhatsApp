@@ -86,5 +86,12 @@ namespace CpmDemoApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public IActionResult ClearHistory()
+        {
+            Messages.MessagesListStatic = new List<Message>();
+            return View("Index");
+        }
     }
 }
