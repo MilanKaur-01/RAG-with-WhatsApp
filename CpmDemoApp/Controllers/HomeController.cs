@@ -91,7 +91,7 @@ namespace CpmDemoApp.Controllers
         public IActionResult ClearHistory()
         {
             Messages.MessagesListStatic = new List<Message>();
-            return View("Index");
+            return RedirectToAction("Index");
         }
     }
 }
