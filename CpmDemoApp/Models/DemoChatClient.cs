@@ -7,36 +7,40 @@ using System.Timers;
 namespace CpmDemoApp.Models
 {
     public class DemoChatClient
-    { 
-        static Uri endpoint = new Uri("https://acsxxplatdemo.int.communication.azure.net");
-        static string connectionString = "endpoint=https://acsxxplatdemo.int.communication.azure.net/;accesskey=7zIRqTFXRyeBzypL08hu1tJh/QTLNvLChrodkr7FeqyhIfPHx21EPU7Z6BcGbMcNH2xvpcFhM4pi1r8UXgJMgA==";
-        static CommunicationUserIdentifier userIdentifier = new CommunicationUserIdentifier("8:acs:51538f79-1c6e-48fb-b379-9ed2457bde90_00000012-7ebe-83c7-5896-094822000d7b");
-        static CommunicationIdentityClient communicationIdentityClient;
-        static IEnumerable<CommunicationTokenScope> scopes;
-        static AccessToken token;
+    {
+        private static Uri _endpoint = new Uri("https://acsxxplatdemo.int.communication.azure.net");
+        private static string _connectionString = "endpoint=https://acsxxplatdemo.int.communication.azure.net/;accesskey=7zIRqTFXRyeBzypL08hu1tJh/QTLNvLChrodkr7FeqyhIfPHx21EPU7Z6BcGbMcNH2xvpcFhM4pi1r8UXgJMgA==";
+        private static CommunicationUserIdentifier _userIdentifier = new CommunicationUserIdentifier("8:acs:51538f79-1c6e-48fb-b379-9ed2457bde90_00000012-7ebe-83c7-5896-094822000d7b");
+        private static CommunicationIdentityClient _communicationIdentityClient;
+        private static IEnumerable<CommunicationTokenScope> _scopes;
+        private static AccessToken _token;
+        private static ChatClient _chatClient { get; set; }
 
         static DemoChatClient()
         {
-            communicationIdentityClient = new CommunicationIdentityClient(connectionString);
-            scopes = new[] { CommunicationTokenScope.Chat };
-
-            refreshTokenEveryDay();
-            var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromHours(24); // refresh the token every 24 hours
-
-            var timer = new System.Threading.Timer((e) =>
-            {
-                refreshTokenEveryDay();
-            }, null, startTimeSpan, periodTimeSpan);
+            _communicationIdentityClient = new CommunicationIdentityClient(_connectionString);
+            _scopes = new[] { CommunicationTokenScope.Chat };
+            refreshToken();
         }
 
-        public static ChatClient ChatClient { get; set; }
+        public static ChatClient ChatClient {
+            get
+            {
+                if (_token.ExpiresOn < DateTimeOffset.UtcNow)
+                    refreshToken();
+                return _chatClient;
+            } 
+            set {
+                _chatClient = value;
+            } 
+        }
 
-        static void refreshTokenEveryDay()
+        public static void refreshToken()
         {
-            token = communicationIdentityClient.GetToken(userIdentifier, scopes);
-            CommunicationTokenCredential communicationTokenCredential = new CommunicationTokenCredential(token.Token);
-            ChatClient = new ChatClient(endpoint, communicationTokenCredential);
+            _token = _communicationIdentityClient.GetToken(_userIdentifier, _scopes);
+            CommunicationTokenCredential communicationTokenCredential = new CommunicationTokenCredential(_token.Token);
+            _chatClient = new ChatClient(_endpoint, communicationTokenCredential);
+            System.Diagnostics.Debug.WriteLine("Refreshed token");
         }
     }
 }
