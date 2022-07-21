@@ -24,7 +24,10 @@ namespace CpmDemoApp.Controllers
             if (string.IsNullOrWhiteSpace(Phone_Number) 
                 || (string.IsNullOrWhiteSpace(Message) && string.IsNullOrWhiteSpace(Image)))
             {
-                ViewData["Gloria"] = "changed";
+                Messages.MessagesListStatic.Add(new Message
+                {
+                    Text = "Please make sure you have put down phone number and either a text message or an image url.",
+                });
                 return View();
             }
 
