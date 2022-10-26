@@ -1,7 +1,8 @@
-﻿using Azure.Communication.Chat;
+﻿using Azure.Communication.Messages;
 using CpmDemoApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Azure;
 
 namespace CpmDemoApp.Controllers
 {
@@ -31,20 +32,22 @@ namespace CpmDemoApp.Controllers
                 return View();
             }
 
-            SendExternalMessageResult result;
-            if (Image != null)
-            {
-                var options = new SendExternalMessageOptions(Phone_Number, new Uri(Image));
-                result = await DemoChatClient.ChatClient.SendExternalMessageAsync(options);
-            }
-            else
-            {
-                var options = new SendExternalMessageOptions(Phone_Number, Message);
-                result = await DemoChatClient.ChatClient.SendExternalMessageAsync(options);
-            }
+            var recipientList = new List<string> { Phone_Number };
 
-            if (result.Status == ExternalMessageStatus.Enqueued)
+
+            try
             {
+                if (Image != null)
+                {
+                    var options = new SendMessageOptions(DemoNotificationMessagesClient.ChannelRegistrationId, recipientList, new Uri(Image));
+                    await DemoNotificationMessagesClient.NotificationMessagesClient.SendMessageAsync(options);
+                }
+                else
+                {
+                    var options = new SendMessageOptions(DemoNotificationMessagesClient.ChannelRegistrationId, recipientList, Message);
+                    await DemoNotificationMessagesClient.NotificationMessagesClient.SendMessageAsync(options);
+                }
+
                 if (Image != null)
                 {
                     Messages.MessagesListStatic.Add(new Message
@@ -55,20 +58,20 @@ namespace CpmDemoApp.Controllers
                 }
                 else
                 {
-                     Messages.MessagesListStatic.Add(new Message { 
-                        Text = $"Sent a message to \"{Phone_Number}\": \"{Message}\"" 
-                     });
+                    Messages.MessagesListStatic.Add(new Message { 
+                    Text = $"Sent a message to \"{Phone_Number}\": \"{Message}\"" 
+                    });
                 }
-                   
-                ModelState.Clear();
             }
-            else
+            catch (RequestFailedException e)
             {
                 Messages.MessagesListStatic.Add(new Message
                 {
-                    Text = $"Message \"{Message}\" to \"{Phone_Number}\" failed."
+                    Text = $"Message \"{Message}\" to \"{Phone_Number}\" failed. Exception: {e.Message}"
                 });
             }
+                   
+            ModelState.Clear();
             
             return View();
         }

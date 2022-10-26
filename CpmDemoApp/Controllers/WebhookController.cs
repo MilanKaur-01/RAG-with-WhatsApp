@@ -77,14 +77,26 @@ namespace viewer.Controllers
             var eventGridEvents = JsonSerializer.Deserialize<EventGridEvent[]>(jsonContent, _options);
             foreach (var eventGridEvent in eventGridEvents)
             {
-                if (string.Equals(eventGridEvent.EventType, "Microsoft.Communication.ExperimentalEvent", StringComparison.OrdinalIgnoreCase))
+                switch (eventGridEvent.EventType.ToLower())
                 {
-                    var eventData = JsonSerializer.Deserialize<ExperimentalEventData>(eventGridEvent.Data.ToString(), _options);
+                    case "microsoft.communication.experimentalEvent":
+                        var eventData = JsonSerializer.Deserialize<ExperimentalEventData>(eventGridEvent.Data.ToString(), _options);
 
-                    Messages.MessagesListStatic.Add(new Message
-                    {
-                        Text = $"Received message from \"{eventData.ExperimentalEventPayload.From}\": \"{eventData.ExperimentalEventPayload.Message}\""
-                    }); 
+                        Messages.MessagesListStatic.Add(new Message
+                        {
+                            Text = $"Received message from \"{eventData.ExperimentalEventPayload.From}\": \"{eventData.ExperimentalEventPayload.Message}\""
+                        });
+                        break;
+                    case "microsoft.communication.externalmessagereceived":
+                        var messageReceivedEventData = JsonSerializer.Deserialize<ExternalMessageReceivedEventData>(eventGridEvent.Data.ToString(), _options);
+
+                        Messages.MessagesListStatic.Add(new Message
+                        {
+                            Text = $"Received message from \"{messageReceivedEventData.From}\": \"{messageReceivedEventData.Message}\""
+                        });
+                        break;
+                    default:
+                        break;
                 }
             }
 
