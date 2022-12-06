@@ -1,6 +1,6 @@
 namespace CpmDemoApp.Models
 {
-    public class ExternalMessageReceivedEventData
+    public class CrossPlatformMessageReceivedEventData
     {
         public string From { get; set; }
         public string To { get; set; }

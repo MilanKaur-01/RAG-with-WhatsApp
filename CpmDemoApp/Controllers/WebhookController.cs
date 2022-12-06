@@ -87,8 +87,8 @@ namespace viewer.Controllers
                             Text = $"Received message from \"{eventData.ExperimentalEventPayload.From}\": \"{eventData.ExperimentalEventPayload.Message}\""
                         });
                         break;
-                    case "microsoft.communication.externalmessagereceived":
-                        var messageReceivedEventData = JsonSerializer.Deserialize<ExternalMessageReceivedEventData>(eventGridEvent.Data.ToString(), _options);
+                    case "microsoft.communication.crossplatformmessagereceived":
+                        var messageReceivedEventData = JsonSerializer.Deserialize<CrossPlatformMessageReceivedEventData>(eventGridEvent.Data.ToString(), _options);
 
                         Messages.MessagesListStatic.Add(new Message
                         {
