@@ -3,15 +3,24 @@ using CpmDemoApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Azure;
+using Microsoft.Extensions.Options;
 
 namespace CpmDemoApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger)
+        private static bool _initialized;
+        private static NotificationMessagesClient _notificationMessagesClient;
+        private static string _channelRegistrationId;
+
+        public HomeController(IOptions<ClientOptions> options)
         {
-            _logger = logger;
+            if (!_initialized)
+            {
+                _channelRegistrationId = options.Value.ChannelRegistrationId;
+                _notificationMessagesClient = new NotificationMessagesClient(options.Value.ConnectionString);
+                _initialized = true;
+            }
         }
 
         public IActionResult Index()
@@ -39,17 +48,8 @@ namespace CpmDemoApp.Controllers
             {
                 if (Image != null)
                 {
-                    var options = new SendMessageOptions(DemoNotificationMessagesClient.ChannelRegistrationId, recipientList, new Uri(Image));
-                    await DemoNotificationMessagesClient.NotificationMessagesClient.SendMessageAsync(options);
-                }
-                else
-                {
-                    var options = new SendMessageOptions(DemoNotificationMessagesClient.ChannelRegistrationId, recipientList, Message);
-                    await DemoNotificationMessagesClient.NotificationMessagesClient.SendMessageAsync(options);
-                }
-
-                if (Image != null)
-                {
+                    var options = new SendMessageOptions(_channelRegistrationId, recipientList, new Uri(Image));
+                    await _notificationMessagesClient.SendMessageAsync(options); 
                     Messages.MessagesListStatic.Add(new Message
                     {
                         Text = $"Sent a image to \"{Phone_Number}\": ",
@@ -58,8 +58,11 @@ namespace CpmDemoApp.Controllers
                 }
                 else
                 {
-                    Messages.MessagesListStatic.Add(new Message { 
-                    Text = $"Sent a message to \"{Phone_Number}\": \"{Message}\"" 
+                    var options = new SendMessageOptions(_channelRegistrationId, recipientList, Message);
+                    await _notificationMessagesClient.SendMessageAsync(options);
+                    Messages.MessagesListStatic.Add(new Message
+                    {
+                        Text = $"Sent a message to \"{Phone_Number}\": \"{Message}\""
                     });
                 }
             }
