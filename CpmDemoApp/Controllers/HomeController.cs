@@ -43,7 +43,6 @@ namespace CpmDemoApp.Controllers
 
             var recipientList = new List<string> { Phone_Number };
 
-
             try
             {
                 if (Image != null)
@@ -77,17 +76,6 @@ namespace CpmDemoApp.Controllers
             ModelState.Clear();
             
             return View();
-        }
-
-        public IActionResult MessagesList()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult MessagesList(string nothing)
-        {
-            return PartialView();
         }
 
         [HttpPost]
