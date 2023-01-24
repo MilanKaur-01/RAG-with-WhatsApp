@@ -79,6 +79,12 @@ namespace CpmDemoApp.Controllers
         }
 
         [HttpPost]
+        public IActionResult MessagesList()
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
         public IActionResult ClearHistory()
         {
             Messages.MessagesListStatic = new List<Message>();
