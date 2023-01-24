@@ -9,17 +9,17 @@ namespace CpmDemoApp.Controllers
 {
     public class HomeController : Controller
     {
-        private static bool _initialized;
+        private static bool _clientInitialized;
         private static NotificationMessagesClient _notificationMessagesClient;
         private static string _channelRegistrationId;
 
         public HomeController(IOptions<ClientOptions> options)
         {
-            if (!_initialized)
+            if (!_clientInitialized)
             {
                 _channelRegistrationId = options.Value.ChannelRegistrationId;
                 _notificationMessagesClient = new NotificationMessagesClient(options.Value.ConnectionString);
-                _initialized = true;
+                _clientInitialized = true;
             }
         }
 
