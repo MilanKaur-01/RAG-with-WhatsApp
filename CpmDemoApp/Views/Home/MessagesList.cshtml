@@ -8,11 +8,46 @@
         @foreach (var message in Messages.MessagesListStatic)
         {
             <li>
-                @if(message.Text!=null)
+                @if (message.Analysis != null)
+                {
+                    <div>
+                        Message analysis:
+                    </div>
+                    <div>
+                        Original Message: @message.Analysis.OriginalMessage
+                    </div>
+                    <table>
+                        <tr>
+                            <th>LanguageDetection</th>
+                            <th>Sentiment</th>
+                            <th>IntentAnalysis</th>
+                            <th>KeyphraseExtraction</th>
+                        </tr>
+                        <tr>
+                            <td>Language: @message.Analysis.LanguageDetection.Language</td>
+                            <td>Score: @message.Analysis.Sentiment.Score</td>
+                            <td>@message.Analysis.IntentAnalysis</td>
+                            <td>@(String.Join(",", message.Analysis.KeyphraseExtraction))</td>
+                        </tr>
+                        <tr>
+                            <td>ConfidenceScore: @message.Analysis.LanguageDetection.ConfidenceScore</td>
+                            <td>Description: @message.Analysis.Sentiment.Description</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Translation: @message.Analysis.LanguageDetection.Translation</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                }
+                @if (message.Text != null)
                 {
                     @message.Text
                 }
-                @if(message.Image!=null)
+                @if (message.Image != null)
                 {
                     <img src=@message.Image style="max-width:100px;">
                 }

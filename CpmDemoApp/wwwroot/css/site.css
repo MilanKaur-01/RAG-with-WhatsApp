@@ -16,3 +16,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+td:nth-child(even), th:nth-child(even) {
+    background-color: rgba(150, 212, 212, 0.4);
+}

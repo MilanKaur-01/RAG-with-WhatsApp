@@ -11,13 +11,13 @@ namespace CpmDemoApp.Controllers
     {
         private static bool _clientInitialized;
         private static NotificationMessagesClient _notificationMessagesClient;
-        private static string _channelRegistrationId;
+        private static Guid _channelRegistrationId;
 
         public HomeController(IOptions<ClientOptions> options)
         {
             if (!_clientInitialized)
             {
-                _channelRegistrationId = options.Value.ChannelRegistrationId;
+                _channelRegistrationId = Guid.Parse(options.Value.ChannelRegistrationId);
                 _notificationMessagesClient = new NotificationMessagesClient(options.Value.ConnectionString);
                 _clientInitialized = true;
             }
@@ -47,8 +47,8 @@ namespace CpmDemoApp.Controllers
             {
                 if (Image != null)
                 {
-                    var options = new SendMessageOptions(_channelRegistrationId, recipientList, new Uri(Image));
-                    await _notificationMessagesClient.SendMessageAsync(options); 
+                    var mediaContext = new MediaNotificationContent(_channelRegistrationId, recipientList, new Uri(Image));
+                    await _notificationMessagesClient.SendAsync(mediaContext); 
                     Messages.MessagesListStatic.Add(new Message
                     {
                         Text = $"Sent a image to \"{Phone_Number}\": ",
@@ -57,8 +57,8 @@ namespace CpmDemoApp.Controllers
                 }
                 else
                 {
-                    var options = new SendMessageOptions(_channelRegistrationId, recipientList, Message);
-                    await _notificationMessagesClient.SendMessageAsync(options);
+                    var textContent = new TextNotificationContent(_channelRegistrationId, recipientList, Message);
+                    await _notificationMessagesClient.SendAsync(textContent);
                     Messages.MessagesListStatic.Add(new Message
                     {
                         Text = $"Sent a message to \"{Phone_Number}\": \"{Message}\""
@@ -73,8 +73,9 @@ namespace CpmDemoApp.Controllers
                 });
             }
                    
-            ModelState.Clear();
-            
+            ModelState.Remove(nameof(Message));
+            ModelState.Remove(nameof(Image));
+
             return View();
         }
 
