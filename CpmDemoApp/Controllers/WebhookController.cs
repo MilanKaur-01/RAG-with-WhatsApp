@@ -79,12 +79,19 @@ namespace viewer.Controllers
             {
                 switch (eventGridEvent.EventType.ToLower())
                 {
-                    case "microsoft.communication.crossplatformmessagereceived":
+                    case "microsoft.communication.advancedmessagereceived":
                         var messageReceivedEventData = JsonSerializer.Deserialize<CrossPlatformMessageReceivedEventData>(eventGridEvent.Data.ToString(), _options);
 
                         Messages.MessagesListStatic.Add(new Message
                         {
                             Text = $"Received message from \"{messageReceivedEventData.From}\": \"{messageReceivedEventData.Content}\""
+                        });
+                        break;
+                    case "microsoft.communication.advancedmessageanalysiscompleted":
+                        var messageAnalysisEventData = JsonSerializer.Deserialize<AdvancedMessageAnalysisCompletedEventData>(eventGridEvent.Data.ToString(), _options);
+                        Messages.MessagesListStatic.Add(new Message
+                        {
+                            Analysis = messageAnalysisEventData
                         });
                         break;
                     default:
