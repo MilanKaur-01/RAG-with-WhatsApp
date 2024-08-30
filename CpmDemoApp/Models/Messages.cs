@@ -1,8 +1,11 @@
+using OpenAI.Chat;
+
 namespace CpmDemoApp.Models
 {
-    public class Messages
+     public class Messages
     {
         public static IList<Message> MessagesListStatic { get; set; } = new List<Message>();
+        public static IList<ChatMessage> ConversationHistory { get; set; } = new List<ChatMessage>();
     }
 
     public class Message

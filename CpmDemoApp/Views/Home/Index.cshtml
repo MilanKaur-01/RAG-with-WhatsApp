@@ -26,39 +26,8 @@
     RefreshPartial();
 </script>
 
-<h1>Flower Shop Business Chat</h1>  
+<h1>Contoso Electronics Customer Service Chat</h1>  
   
-<strong>Send a Message</strong>
-
-<tr class="form-group">  
-    @using (Html.BeginForm("Index", "Home", FormMethod.Post))  
-    {  
-        <table>   
-            <tr>  
-                <td> @Html.Label("Phone Number: ")  </td>
-                <td> @Html.TextBox("Phone_Number") </td>  
-            </tr> 
-            
-            <tr>  
-                <td>@Html.Label("Message:")  </td>
-                <td>@Html.TextBox("Message")  </td>
-            </tr>  
-
-            <tr>  
-                <td>@Html.Label("Image Url:")  </td>
-                <td>@Html.TextBox("Image")  </td>
-            </tr>  
-  
-            <tr>  
-                <td>  
-                    <input type="submit" value="Send" class="btn-primary" />  
-                </td>  
-  
-            </tr> 
-        </table>  
-    }  
-</tr>
-
 <br>
 
 <div>  
