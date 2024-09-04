@@ -3,9 +3,9 @@ using CpmDemoApp.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<ClientOptions>(builder.Configuration.GetSection("ClientOptions"));
+builder.Services.Configure<NotificationMessagesClientOptions>(builder.Configuration.GetSection("NotificationMessagesClientOptions"));
+builder.Services.Configure<OpenAIClientOptions>(builder.Configuration.GetSection("OpenAIClientOptions"));
 builder.Services.AddControllersWithViews();
-
 
 var app = builder.Build();
 

@@ -1,6 +1,6 @@
 namespace CpmDemoApp.Models
 {
-    public class ClientOptions
+    public class NotificationMessagesClientOptions
     {
         public string ConnectionString { get; set; }
 
