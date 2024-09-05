@@ -50,7 +50,7 @@ Before setting up the application, ensure you have the following:
 4. **Set Up Event Grid Subscription:**
 
    To receive and handle incoming messages, set up an Event Grid subscription:
-    - Navigate to your Event Grid resource in the Azure Portal.
+    - Navigate to the Events tab of your Azure Communication Services resource in the Azure Portal.
     - Create a new Event Subscription for the `advancedmessagereceived` event type.
     - Choose **Web Hook**  as the endpoint type.
     - Use your deployed web app URL appended with `/webhook` as the subscriber endpoint (e.g., https://yourapp.azurewebsites.net/webhook).
